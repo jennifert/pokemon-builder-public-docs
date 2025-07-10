@@ -3,7 +3,7 @@
 This repository hosts the auto-generated [JSDoc](https://jsdoc.app/) documentation for the Pokémon Builder project.
 
 📚 **View the documentation**:  
-➡️ [https://jennifert.github.io/pokemon-builder-public-docs](https://jennifert.github.io/pokemon-builder-public-docs)
+➡️ [https://jennifert.github.io/pokemon-builder-public-jsdocs](https://jennifert.github.io/pokemon-builder-public-jsdocs)
 
 ---
 
