@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: party.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: party.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file party.js
+ * @description Manages the user's party of up to 6 Pokémon.
+ * - Handles display rendering for each Pokémon
+ * - Provides logic for clearing the party
+ * - Analyzes type effectiveness via utility modules
+ */
+import { fetchDexEntries } from './fetch.js';
+import { selectedSprites } from './state.js';
+import { getIndividualTypeAnalysis } from './type-utils.js';
+
+/** @constant {number} maxPartySize - The maximum allowed number of Pokémon in a party */
+export const maxPartySize = 6;
+
+/** 
+ * @type {string[]}
+ * @description An array of Pokémon dex IDs currently in the party.
+ */
+export const party = [];
+
+/**
+ * Updates the party display area with current party Pokémon.
+ * Loads sprites and shows a breakdown of type matchups.
+ * @returns {void}
+ */
+export function updatePartyDisplay() {
+    const container = document.getElementById('partyDisplay');
+    container.innerHTML = '&lt;strong class="block">Party:&lt;/strong> ';
+
+    fetchDexEntries().then(dexResults => {
+        const imageBase = dexResults['imageSrc'] + selectedSprites.value + '/transparent/';
+        const pokemonList = dexResults['pokemon'];
+
+        for (let dexId of party) {
+            const mon = pokemonList.find(p => p.dexId === dexId);
+            if (!mon) continue;
+
+            const name = mon.name;
+            const types = mon.types.map(t => t.toLowerCase());
+            const analysis = getIndividualTypeAnalysis(types, mon);  // Uses JSON-based weakness info
+
+            const parsedDexID = parseInt(dexId);
+            const checkOne = dexId.substring(0, 1);
+            const checkTwo = dexId.substring(0, 2);
+
+            let imageName;
+            if (parsedDexID &lt; 100) {
+                imageName = checkTwo === '00' ? dexId.slice(2)
+                    : checkOne === '0' ? dexId.slice(1)
+                        : dexId;
+            } else {
+                imageName = dexId;
+            }
+
+            const sprite = `${imageBase}${imageName}.png`;
+
+            container.innerHTML += `
+                &lt;div 
+                    class="party-info" 
+                    data-dexid="${dexId}" 
+                    role="button"
+                    tabindex="0"
+                    aria-label="Click to remove ${name} from your party"
+                    title="Click to remove"
+                >
+                    &lt;img src="${sprite}" alt="${name}" />
+                    &lt;div class="party-info-name">${name}&lt;/div>
+                    &lt;div class="party-info-details">
+                        🔥 &lt;strong>Weak:&lt;/strong> ${analysis.weaknesses.join(', ') || 'None'}&lt;br>
+                        🛡 &lt;strong>Resist:&lt;/strong> ${analysis.resistances.join(', ') || 'None'}&lt;br>
+                        ⚪ &lt;strong>Neutral:&lt;/strong> ${analysis.neutral.join(', ') || 'None'}&lt;br>
+                        💥 &lt;strong>Strong:&lt;/strong> ${analysis.strongAgainst.join(', ') || 'None'}&lt;br>
+                        ❌ &lt;strong>No Effect:&lt;/strong> ${analysis.noEffect.join(', ') || 'None'}
+                    &lt;/div>
+                &lt;/div>
+            `;
+
+        }
+
+        if (party.length === 0) {
+            container.innerHTML += '&lt;em> (empty)&lt;/em>';
+        }
+    });
+}
+
+/**
+ * Clears all Pokémon from the party and hides the Clear Party button.
+ * Also re-renders the (empty) party area.
+ * @returns {void}
+ */
+export function clearParty() {
+    party.length = 0;
+    document.getElementById('clearParty').classList.add('hidden');
+    updatePartyDisplay();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#typeChart">typeChart</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jul 09 2025 17:51:55 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
