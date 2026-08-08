@@ -28,62 +28,46 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file type-utils.js
- * @description Analyzes a Pokémon's weaknesses, resistances, and immunities using
- * precomputed effectiveness data from its JSON entry.
+ * @description Analyzes a Pokémon's defensive type matchups using
+ * effectiveness data stored in the generation JSON.
  */
 
 /**
- * Processes a Pokémon's effectiveness map (from JSON) into categorized matchups.
+ * Categorizes a Pokémon's defensive type effectiveness.
  *
- * @param {string[]} types - Array of Pokémon types (e.g., ['fire', 'flying'])
- * @param {Object} pokemonData - Full Pokémon object from the JSON data
- * @param {Object.&lt;string, number>} pokemonData.weaknesses - Type effectiveness multipliers
- * @returns {Object} Breakdown of type matchups:
- *   - weaknesses: string[]
- *   - resistances: string[]
- *   - neutral: string[]
- *   - strongAgainst: string[]
- *   - noEffect: string[]
+ * @param {Object} pokemonData - Pokémon object from the generation JSON
+ * @returns {Object} Categorized defensive matchups
  */
-export function getIndividualTypeAnalysis(types, pokemonData) {
+export function getIndividualTypeAnalysis(pokemonData) {
   const weaknesses = [];
   const resistances = [];
+  const immunities = [];
   const neutral = [];
-  const strongAgainst = [];
-  const noEffect = [];
 
-  // Iterate over all the weaknesses in the Pokémon data. Identify offensive advantages (overlap with weaknesses)
-  for (const type of Object.keys(pokemonData.weaknesses)) {
-    const effectiveness = pokemonData.weaknesses[type]; // This comes directly from the JSON
+  for (const [type, multiplier] of Object.entries(pokemonData.weaknesses)) {
+    const matchup = {
+      type,
+      multiplier
+    };
 
-    if (effectiveness > 1) {
-      weaknesses.push(type); // Weakness: effectiveness > 1 (super effective)
-    } else if (effectiveness &lt; 1 &amp;&amp; effectiveness > 0) {
-      resistances.push(type); // Resistance: effectiveness &lt; 1 but > 0 (not very effective)
-    } else if (effectiveness === 1) {
-      neutral.push(type); // Neutral: effectiveness == 1 (normal effectiveness)
-    } else if (effectiveness === 0) {
-      noEffect.push(type); // No Effect: effectiveness == 0 (no effect)
-    }
-  }
-
-  // Populate strongAgainst for types with effectiveness > 1
-  for (const type of Object.keys(pokemonData.weaknesses)) {
-    const effectiveness = pokemonData.weaknesses[type];
-    if (effectiveness > 1) {
-      strongAgainst.push(type); // Strong Against: effectiveness > 1
+    if (multiplier === 0) {
+      immunities.push(matchup);
+    } else if (multiplier > 1) {
+      weaknesses.push(matchup);
+    } else if (multiplier &lt; 1) {
+      resistances.push(matchup);
+    } else {
+      neutral.push(matchup);
     }
   }
 
   return {
     weaknesses,
     resistances,
-    neutral,
-    strongAgainst,
-    noEffect
+    immunities,
+    neutral
   };
-}
-</code></pre>
+}</code></pre>
         </article>
     </section>
 
@@ -93,13 +77,13 @@ export function getIndividualTypeAnalysis(types, pokemonData) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#typeChart">typeChart</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jul 09 2025 17:51:55 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Aug 07 2026 20:16:53 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

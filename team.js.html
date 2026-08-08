@@ -28,40 +28,61 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file team.js
- * @description Analyzes the type distribution of the current Pokémon party.
- * - Counts type occurrences
- * - Passes data to display for rendering the Team Weakness Table
+ * @description Analyzes defensive type matchups for the current Pokémon party.
+ * - Reads weakness data from the selected generation JSON
+ * - Counts how many party members are weak, resistant, immune, or neutral to each type
+ * - Passes the results to the display layer
  */
-import { fetchDexEntries } from './fetch.js';
+
 import { party } from './party.js';
 import { displayTeamWeaknessTable } from './display.js';
 
 /**
- * Calculates how many party Pokémon have each type (e.g., water, fire).
- * Sends the results to `displayTeamWeaknessTable` for rendering.
- * 
+ * Calculates the team's defensive matchups using the currently
+ * selected generation data.
+ *
+ * @param {Object|null} generationData
  * @returns {void}
  */
-export function calculateTeamWeaknesses() {
-  fetchDexEntries().then(dexResults => {
-    const pokemonList = dexResults['pokemon'];
-    const typeCounts = {};
+export function calculateTeamWeaknesses(generationData) {
+  if (!generationData) {
+    displayTeamWeaknessTable({});
+    return;
+  }
 
-    for (let dexId of party) {
-      const mon = pokemonList.find(p => p.dexId === dexId);
-      if (!mon) continue;
+  const pokemonList = generationData.pokemon;
 
-      const types = mon.types.map(t => t.toLowerCase());
+  const typeAnalysis = {};
 
-      for (let type of types) {
-        typeCounts[type] = (typeCounts[type] || 0) + 1;
+  for (const dexId of party) {
+    const mon = pokemonList.find(pokemon => pokemon.dexId === dexId);
+
+    if (!mon) continue;
+
+    for (const [type, multiplier] of Object.entries(mon.weaknesses)) {
+      if (!typeAnalysis[type]) {
+        typeAnalysis[type] = {
+          weak: 0,
+          resistant: 0,
+          immune: 0,
+          neutral: 0
+        };
+      }
+
+      if (multiplier === 0) {
+        typeAnalysis[type].immune += 1;
+      } else if (multiplier > 1) {
+        typeAnalysis[type].weak += 1;
+      } else if (multiplier &lt; 1) {
+        typeAnalysis[type].resistant += 1;
+      } else {
+        typeAnalysis[type].neutral += 1;
       }
     }
+  }
 
-    displayTeamWeaknessTable(typeCounts);
-  });
-}
-</code></pre>
+  displayTeamWeaknessTable(typeAnalysis);
+}</code></pre>
         </article>
     </section>
 
@@ -71,13 +92,13 @@ export function calculateTeamWeaknesses() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#typeChart">typeChart</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jul 09 2025 17:51:55 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Aug 07 2026 20:16:53 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

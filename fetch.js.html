@@ -44,11 +44,33 @@ import {
 } from './state.js';
 
 /**
- * Fetches the Gen 1 Pokédex entries from a local JSON file.
- * @returns {Promise&lt;Object>} A Promise resolving to parsed Dex data including images and Pokémon.
+ * Fetches the list of supported generations.
+ *
+ * @returns {Promise&lt;Object>}
  */
-export async function fetchDexEntries() {
-  const response = await fetch('data/gen1.json');
+export async function fetchGenerations() {
+  const response = await fetch('/data/generations.json');
+
+  if (!response.ok) {
+    throw new Error('Unable to load generation data.');
+  }
+
+  return await response.json();
+}
+
+/**
+ * Fetches data for a selected Pokémon generation.
+ *
+ * @param {string} file - JSON filename for the selected generation
+ * @returns {Promise&lt;Object>}
+ */
+export async function fetchDexEntries(file) {
+  const response = await fetch(`/data/${file}`);
+
+  if (!response.ok) {
+    throw new Error(`Unable to load ${file}.`);
+  }
+
   return await response.json();
 }
 
@@ -68,7 +90,7 @@ export function ViewPokemon(dexResults) {
   results.innerHTML = '';
 
   // Insert heading at the top
-  results.insertAdjacentHTML('beforeend', `&lt;h2 class="block">Available Pokémon&lt;/h2>`);
+  results.insertAdjacentHTML('beforeend', '&lt;h2 class="block">Available Pokémon&lt;/h2>');
 
   for (let entry in pokemon) {
     let dexId = pokemon[entry]['dexId'];
@@ -93,11 +115,10 @@ export function ViewPokemon(dexResults) {
     if (selectedEvolve.value === 'yes' &amp;&amp; tradeEvolve) continue;
 
     if (
-      (selectedVersion.value === 'red' &amp;&amp; unobtainable.includes('red')) ||
-      (selectedVersion.value === 'blue' &amp;&amp; unobtainable.includes('blue')) ||
-      (selectedVersion.value === 'yellow' &amp;&amp; unobtainable.includes('yellow'))
+      selectedUnobtainable.value === 'yes' &amp;&amp;
+      unobtainable.includes(selectedVersion.value)
     ) {
-      if (selectedUnobtainable.value === 'yes') continue;
+      continue;
     }
 
     if (selectedEvolution.value === 'yes' &amp;&amp; !finalForm) continue;
@@ -115,13 +136,13 @@ export function ViewPokemon(dexResults) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#typeChart">typeChart</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jul 09 2025 17:51:55 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Aug 07 2026 20:16:53 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
