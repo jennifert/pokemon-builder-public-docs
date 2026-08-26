@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: loading-messages.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: loading-messages.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file loading-messages.js
+ * @description A list of funny, Pokémon-themed loading messages and a utility function to fetch one at random.
+ */
+
+/**
+ * Pokémon-themed loading messages for fun status displays.
+ *
+ * @type {string[]}
+ */
+export const loadingMessages = [
+  // Trainer &amp; Pokédex themed
+  'Calling Professor Oak… again.',
+  'Gary has already picked his team. Ugh.',
+  'Reading your Pokédex. Pretending you caught them all.',
+  'Your rival is watching. No pressure.',
+  'Checking your Poké Balls for unauthorized Magikarps.',
+  'Nurse Joy is inspecting your party. Please wait.',
+
+  // Strategy &amp; Type logic
+  'Calculating STAB... then recalculating it for fun.',
+  'Rechecking resistances. Hope you\'re not weak to Rock.',
+  'Trying to remember why Ice beats Grass but not Water...',
+  'Assigning nicknames like "DeathBeak" and "Jeff".',
+  'Balancing your team... poorly, but enthusiastically.',
+  'Team synergy is... questionable. Reviewing anyway.',
+
+  // Charting &amp; Type system
+  'Consulting the Type Chart. It\'s cranky today.',
+  'Looking up why Dragon fears Fairy. Still confused.',
+  'Applying Gen 1 logic... Ghost vs. Psychic? Sure.',
+  'Normal is weak to... wait, nothing? Okay then.',
+  'Searching for a reason to use Bug types. Found one!',
+
+  // Legendary or Mythic flavor
+  'Summoning Rayquaza. Delays expected.',
+  'Mewtwo is ignoring your request. Again.',
+  'Communing with Arceus... Just kidding, it\'s busy.',
+  'Loading power levels... OVER 9000! Wrong franchise.',
+  'Calling in backup from the Elite Four.',
+
+  // Data and sprite jokes
+  'Caching sprites from Kanto. Expect lag.',
+  'Compressing team data into Poké Balls.',
+  'Sending your strategy to Bill’s PC.',
+  'Auto-equipping Leftovers. You’re welcome.',
+  'Sorting EVs, IVs, and existential dread...',
+
+  // Misc silly
+  'Who needs balance? Mono-Fighting FTW!',
+  'Letting RNG pick your sixth slot...',
+  'Loading faster than a Quick Attack. Hopefully.',
+  'Checking for illegal movesets. Shame on you.',
+  'Waiting for your Wi-Fi to stop fainting.'
+];
+
+/**
+ * Picks a random loading message from the predefined list.
+ *
+ * @returns {string} A randomly selected Pokémon-themed loading message.
+ */
+export function getRandomLoadingMessage() {
+  const index = Math.floor(Math.random() * loadingMessages.length);
+  return loadingMessages[index];
+}
+
+// Example usage
+// import { getRandomLoadingMessage } from './loading-messages.js';
+// console.log(getRandomLoadingMessage());</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Aug 07 2026 20:16:53 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
