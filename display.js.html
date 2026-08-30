@@ -38,54 +38,39 @@
  * @returns {void}
  */
 export function displayTeamWeaknessTable(typeAnalysis) {
-  const container = document.getElementById('teamWeaknessTable');
+  const tableBody = document.getElementById('teamWeaknessBody');
 
   if (Object.keys(typeAnalysis).length === 0) {
-    container.innerHTML = '&lt;em>No Pokémon in party.&lt;/em>';
+    tableBody.innerHTML = `
+      &lt;tr>
+        &lt;td colspan="5">
+          &lt;em>No Pokémon in party.&lt;/em>
+        &lt;/td>
+      &lt;/tr>
+    `;
     return;
   }
 
-  let html = `
-    &lt;h3>Team Defensive Matchups&lt;/h3>
-
-    &lt;table class="pokemon-type-breakdown">
-      &lt;thead>
-        &lt;tr>
-          &lt;th>Type&lt;/th>
-          &lt;th>Weak&lt;/th>
-          &lt;th>Resist&lt;/th>
-          &lt;th>Immune&lt;/th>
-          &lt;th>Neutral&lt;/th>
-        &lt;/tr>
-      &lt;/thead>
-
-      &lt;tbody>
-  `;
+  tableBody.innerHTML = '';
 
   const sortedTypes = Object.entries(typeAnalysis).sort(
-    (a, b) => {
-      return b[1].weak - a[1].weak;
-    }
+    (a, b) => b[1].weak - a[1].weak
   );
 
   for (const [type, analysis] of sortedTypes) {
-    html += `
-      &lt;tr>
-        &lt;td>${type}&lt;/td>
-        &lt;td>${analysis.weak}&lt;/td>
-        &lt;td>${analysis.resistant}&lt;/td>
-        &lt;td>${analysis.immune}&lt;/td>
-        &lt;td>${analysis.neutral}&lt;/td>
-      &lt;/tr>
-    `;
+    tableBody.insertAdjacentHTML(
+      'beforeend',
+      `
+        &lt;tr>
+          &lt;th scope="row">${type}&lt;/th>
+          &lt;td>${analysis.weak}&lt;/td>
+          &lt;td>${analysis.resistant}&lt;/td>
+          &lt;td>${analysis.immune}&lt;/td>
+          &lt;td>${analysis.neutral}&lt;/td>
+        &lt;/tr>
+      `
+    );
   }
-
-  html += `
-      &lt;/tbody>
-    &lt;/table>
-  `;
-
-  container.innerHTML = html;
 }</code></pre>
         </article>
     </section>
@@ -96,13 +81,13 @@ export function displayTeamWeaknessTable(typeAnalysis) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#interactionStatus">interactionStatus</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 00:38:04 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 12:07:25 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

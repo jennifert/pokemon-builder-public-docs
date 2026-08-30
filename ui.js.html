@@ -38,7 +38,18 @@
  */
 
 import { fetchGenerations, fetchDexEntries, ViewPokemon } from './fetch.js';
-import { results,  selectedGeneration, selectedSprites, selectedVersion, generationOptions, generationTitle, generationDescription, generationInfo, loadingStatus } from './state.js';
+import {
+  results,
+  selectedGeneration,
+  selectedSprites,
+  selectedVersion,
+  generationOptions,
+  generationTitle,
+  generationDescription,
+  generationInfo,
+  loadingStatus,
+  interactionStatus
+} from './state.js';
 import { party, updatePartyDisplay, clearParty } from './party.js';
 import { calculateTeamWeaknesses } from './team.js';
 
@@ -144,6 +155,10 @@ selectedGeneration.addEventListener('change', async function () {
     generationInfo.hidden = false;
     generationOptions.disabled = false;
 
+    document
+      .getElementById('generationOptionsHelp')
+      .hidden = true;
+
     results.innerHTML = '';
     clearParty(currentGenerationData);
   } catch (error) {
@@ -151,6 +166,10 @@ selectedGeneration.addEventListener('change', async function () {
 
     generationInfo.hidden = true;
     results.innerHTML = '';
+
+    document
+      .getElementById('generationOptionsHelp')
+      .hidden = false;
 
     loadingStatus.textContent =
       `Unable to load generation data. ${error.message}`;
@@ -163,14 +182,14 @@ selectedGeneration.addEventListener('change', async function () {
 
 
 /**
- * Clears the current party when the Clear Party button is clicked.
- * Hides the button and refreshes team analysis.
+ * Clears the current party when the Clear Party button is activated.
+ * Refreshes the party display and team analysis.
  */
 document
   .getElementById('clearParty')
   .addEventListener('click', () => {
     clearParty(currentGenerationData);
-
+    interactionStatus.textContent = 'Party cleared.';
     calculateTeamWeaknesses(currentGenerationData);
   });
 
@@ -196,29 +215,39 @@ document
 
 
 /**
- * Adds or removes a Pokémon from the party when its sprite
- * is clicked in the results list.
+ * Adds or removes a Pokémon from the party when its result button
+ * is activated.
  * Enforces a maximum party size of 6 Pokémon.
  */
 results.addEventListener('click', function (e) {
-  const clickedElement = e.target;
-  const data = clickedElement.dataset;
-  const dexId = data.pokdex;
+  const button = e.target.closest('[data-pokdex]');
 
-  if (!dexId) return;
+  if (!button) return;
+
+  const dexId = button.dataset.pokdex;
+  const name = button.dataset.name;
 
   if (party.length &lt; 6 &amp;&amp; !party.includes(dexId)) {
     party.push(dexId);
+
+    button.setAttribute('aria-pressed', 'true');
+    button.setAttribute('aria-label', `Remove ${name} from party`);
+    button.title = `Remove ${name} from party`;
+
+    interactionStatus.textContent =
+      `${name} added to party. ${party.length} of 6 Pokémon selected.`;
   } else if (party.includes(dexId)) {
     party.splice(party.indexOf(dexId), 1);
+    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute('aria-label', `Add ${name} to party`);
+    button.title = `Add ${name} to party`;
+    interactionStatus.textContent =
+      `${name} removed from party. ${party.length} of 6 Pokémon selected.`;
   } else {
-    alert('Party full (6 Pokémon). Click one to remove.');
+    alert('Party full (6 Pokémon). Remove one before adding another.');
+    interactionStatus.textContent = 'Party full. Remove a Pokémon before adding another.';
     return;
   }
-
-  document
-    .getElementById('clearParty')
-    .classList.remove('hidden');
 
   updatePartyDisplay(currentGenerationData);
 
@@ -227,8 +256,8 @@ results.addEventListener('click', function (e) {
 
 
 /**
- * Removes a Pokémon from the party when clicked
- * inside the party display area.
+ * Removes a Pokémon from the party when its party button
+ * is activated.
  */
 document
   .getElementById('partyDisplay')
@@ -241,10 +270,13 @@ document
     const index = party.indexOf(dexId);
 
     if (index !== -1) {
+      const name =
+        target.querySelector('.party-info-name')?.textContent.trim();
       party.splice(index, 1);
+      interactionStatus.textContent =
+        `${name} removed from party. ${party.length} of 6 Pokémon selected.`;
 
       updatePartyDisplay(currentGenerationData);
-
       calculateTeamWeaknesses(currentGenerationData);
     }
   });
@@ -263,13 +295,13 @@ loadGenerations();</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#interactionStatus">interactionStatus</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 00:38:04 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 12:07:25 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

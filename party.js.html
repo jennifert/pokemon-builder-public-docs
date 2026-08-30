@@ -55,8 +55,14 @@ export function updatePartyDisplay(generationData) {
 
   const container = document.getElementById('partyDisplay');
   const partyCount = document.getElementById('partyCount');
+  const clearPartyButton = document.getElementById('clearParty');
 
   partyCount.textContent = `Party (${party.length}/${maxPartySize})`;
+  clearPartyButton.classList.toggle(
+    'hidden',
+    party.length === 0
+  );
+
   container.innerHTML = '';
 
   if (!generationData) {
@@ -87,20 +93,19 @@ export function updatePartyDisplay(generationData) {
       `${imageBase}${imageName}.png`;
 
     container.innerHTML += `
-      &lt;div
+      &lt;button
+        type="button"
         class="party-info"
         data-dexid="${dexId}"
-        role="button"
-        tabindex="0"
-        aria-label="Click to remove ${name} from your party"
-        title="Click to remove"
+        aria-label="Remove ${name} from party"
+        title="Remove ${name} from party"
       >
-        &lt;img src="${sprite}" alt="${name}" />
+        &lt;img src="${sprite}" alt="">
 
-        &lt;div class="party-info-name">
+        &lt;span class="party-info-name">
           ${name}
-        &lt;/div>
-      &lt;/div>
+        &lt;/span>
+      &lt;/button>
     `;
   }
 
@@ -117,10 +122,6 @@ export function updatePartyDisplay(generationData) {
 export function clearParty(generationData) {
   party.length = 0;
 
-  document
-    .getElementById('clearParty')
-    .classList.add('hidden');
-
   updatePartyDisplay(generationData);
 }</code></pre>
         </article>
@@ -132,13 +133,13 @@ export function clearParty(generationData) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#interactionStatus">interactionStatus</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 00:38:04 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 12:07:25 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
