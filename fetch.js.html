@@ -28,9 +28,10 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file fetch.js
- * @description Handles fetching and rendering Pokémon data.
- * 
- * - `fetchDexEntries()` retrieves Pokémon data from a JSON file.
+ * @description Handles loading, validating, filtering, and rendering Pokémon data.
+ *
+ * - `fetchGenerations()` retrieves the supported generation list.
+ * - `fetchDexEntries()` retrieves and validates generation data.
  * - `ViewPokemon()` filters and displays Pokémon based on user-selected criteria.
  */
 import {
@@ -52,10 +53,67 @@ export async function fetchGenerations() {
   const response = await fetch('/data/generations.json');
 
   if (!response.ok) {
-    throw new Error('Unable to load generation data.');
+    throw new Error('Unable to load the generation list.');
   }
 
-  return await response.json();
+  try {
+    const data = await response.json();
+    return validateGenerationList(data);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(
+        'The generation list contains invalid JSON.'
+      );
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Validates required fields in generation data.
+ *
+ * @param {Object} data - Parsed generation JSON data
+ * @returns {Object} Validated generation data
+ * @throws {Error} If required generation data is missing
+ */
+function validateGenerationData(data) {
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    typeof data.displayName !== 'string' ||
+    typeof data.description !== 'string' ||
+    typeof data.imageSrc !== 'string' ||
+    !Array.isArray(data.spriteSets) ||
+    !Array.isArray(data.versions) ||
+    !Array.isArray(data.pokemon)
+  ) {
+    throw new Error(
+      'The selected generation data is missing required information.'
+    );
+  }
+
+  return data;
+}
+
+/**
+ * Validates the supported generation list.
+ *
+ * @param {Object} data - Parsed generation JSON data
+ * @returns {Object} Validated generation data
+ * @throws {Error} If required generation data is missing
+ */
+function validateGenerationList(data) {
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    !Array.isArray(data.generations)
+  ) {
+    throw new Error(
+      'The generation list is missing required information.'
+    );
+  }
+  return data;
 }
 
 /**
@@ -71,7 +129,16 @@ export async function fetchDexEntries(file) {
     throw new Error(`Unable to load ${file}.`);
   }
 
-  return await response.json();
+  try {
+    const data = await response.json();
+    return validateGenerationData(data);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`The data in ${file} is not valid JSON.`);
+    }
+
+    throw error;
+  }
 }
 
 /**
@@ -82,35 +149,40 @@ export async function fetchDexEntries(file) {
  * @returns {void}
  */
 export function ViewPokemon(dexResults) {
-  let imageSrc = dexResults['imageSrc'] + selectedSprites.value + '/transparent/';
-  let pokemon = dexResults['pokemon'];
-  let htmlPosition = 'beforeend';
+  const imageSrc =
+    dexResults['imageSrc'] +
+    selectedSprites.value +
+    '/transparent/';
 
-  // Clear previous content first
+  const pokemon = dexResults['pokemon'];
+  const htmlPosition = 'beforeend';
+
+  let matchingPokemon = 0;
+
   results.innerHTML = '';
 
-  // Insert heading at the top
-  results.insertAdjacentHTML('beforeend', '&lt;h2 class="block">Available Pokémon&lt;/h2>');
-
-  for (let entry in pokemon) {
-    let dexId = pokemon[entry]['dexId'];
+  for (const entry in pokemon) {
+    const dexId = pokemon[entry]['dexId'];
     const tradeEvolve = pokemon[entry]['evolve']['trade'];
-    let name = pokemon[entry]['name'];
-    let finalForm = pokemon[entry]['finalForm'];
-    let isLegendary = pokemon[entry]['isLegendary'];
-    let types = pokemon[entry]['types'].join();
-    let unobtainable = pokemon[entry]['unobtainable'];
+    const name = pokemon[entry]['name'];
+    const finalForm = pokemon[entry]['finalForm'];
+    const isLegendary = pokemon[entry]['isLegendary'];
+    const types = pokemon[entry]['types'].join();
+    const unobtainable = pokemon[entry]['unobtainable'];
 
-    // eslint-disable-next-line no-unused-vars
-    let parsedDexID = parseInt(dexId);
+    const imageName = dexId.replace(/^0+/, '');
+    const pokedexResults = `
+      &lt;span>
+        &lt;img
+          src="${imageSrc + imageName}.png"
+          alt="${name}"
+          data-name="${name}"
+          data-types="${types}"
+          data-pokdex="${dexId}"
+        >
+      &lt;/span>
+    `;
 
-    // eslint-disable-next-line no-unused-vars
-    let showObtainable = true;
-
-    let imageName = dexId.replace(/^0+/, '');
-    let pokedexResults = `&lt;span>&lt;img src="${imageSrc + imageName}.png" alt="${name}" data-name="${name}" data-types="${types}" data-pokdex="${dexId}">&lt;/span>`;
-
-    // Apply user-selected filters
     if (selectedLegendary.value === 'no' &amp;&amp; isLegendary) continue;
     if (selectedEvolve.value === 'yes' &amp;&amp; tradeEvolve) continue;
 
@@ -123,10 +195,16 @@ export function ViewPokemon(dexResults) {
 
     if (selectedEvolution.value === 'yes' &amp;&amp; !finalForm) continue;
 
+    matchingPokemon += 1;
+
     results.insertAdjacentHTML(htmlPosition, pokedexResults);
   }
-}
-</code></pre>
+
+  results.insertAdjacentHTML(
+    'afterbegin',
+    `&lt;h2>Available Pokémon (${matchingPokemon})&lt;/h2>`
+  );
+}</code></pre>
         </article>
     </section>
 
@@ -136,13 +214,13 @@ export function ViewPokemon(dexResults) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ViewPokemon">ViewPokemon</a></li><li><a href="global.html#calculateTeamWeaknesses">calculateTeamWeaknesses</a></li><li><a href="global.html#clearParty">clearParty</a></li><li><a href="global.html#displayTeamWeaknessTable">displayTeamWeaknessTable</a></li><li><a href="global.html#fetchDexEntries">fetchDexEntries</a></li><li><a href="global.html#fetchGenerations">fetchGenerations</a></li><li><a href="global.html#generationOptions">generationOptions</a></li><li><a href="global.html#getIndividualTypeAnalysis">getIndividualTypeAnalysis</a></li><li><a href="global.html#getRandomLoadingMessage">getRandomLoadingMessage</a></li><li><a href="global.html#loadGenerations">loadGenerations</a></li><li><a href="global.html#loadingMessages">loadingMessages</a></li><li><a href="global.html#loadingStatus">loadingStatus</a></li><li><a href="global.html#maxPartySize">maxPartySize</a></li><li><a href="global.html#party">party</a></li><li><a href="global.html#populateSpriteOptions">populateSpriteOptions</a></li><li><a href="global.html#populateVersionOptions">populateVersionOptions</a></li><li><a href="global.html#results">results</a></li><li><a href="global.html#selectedEvolution">selectedEvolution</a></li><li><a href="global.html#selectedEvolve">selectedEvolve</a></li><li><a href="global.html#selectedGeneration">selectedGeneration</a></li><li><a href="global.html#selectedLegendary">selectedLegendary</a></li><li><a href="global.html#selectedSprites">selectedSprites</a></li><li><a href="global.html#selectedUnobtainable">selectedUnobtainable</a></li><li><a href="global.html#selectedVersion">selectedVersion</a></li><li><a href="global.html#updatePartyDisplay">updatePartyDisplay</a></li><li><a href="global.html#validateGenerationData">validateGenerationData</a></li><li><a href="global.html#validateGenerationList">validateGenerationList</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Aug 07 2026 20:16:53 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Aug 30 2026 00:38:04 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
